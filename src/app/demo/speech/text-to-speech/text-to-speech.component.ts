@@ -25,17 +25,17 @@ export class TextToSpeechComponent extends CognitiveServicesComponent implements
   voiceProcessing = false;
 
   constructor(private titleService: Title, private speechDataService: SpeechDataService, private changeDetectorRef: ChangeDetectorRef) {
-      super();
-      this.titleService.setTitle('Speech API');
+    super();
+    this.titleService.setTitle('Speech API');
   }
 
   ngOnInit() {
-      try {
-          window['AudioContext'] = <AudioContext>(window['AudioContext'] || window['webkitAudioContext']);
-          this.audioContext = new AudioContext;
-      } catch (e) {
-          this.errorMessage = 'No web audio support in this browser!';
-      }
+    try {
+      window['AudioContext'] = <AudioContext>(window['AudioContext'] || window['webkitAudioContext']);
+      this.audioContext = new AudioContext;
+    } catch (e) {
+      this.errorMessage = 'No web audio support in this browser!';
+    }
   }
 
   localeSelected() {
@@ -45,17 +45,17 @@ export class TextToSpeechComponent extends CognitiveServicesComponent implements
   }
 
   playVoice() {
-      this.voiceProcessing = true;
-      const voiceProfile = this.voiceOptions[this.textToSpeechLocale].voices.find(v =>
-        v.fullName === this.textToSpeechVoice);
-      this.speechDataService.textToSpeech(this.textToSpeechText, this.textToSpeechLocale,
-        voiceProfile.fullName, voiceProfile.gender)
-          .then(result => {
-            this.playFile(result);
-          })
-          .catch(() => {
-            console.log('voice failed');
-          });
+    this.voiceProcessing = true;
+    const voiceProfile = this.voiceOptions[this.textToSpeechLocale].voices.find(v =>
+      v.fullName === this.textToSpeechVoice);
+    this.speechDataService.textToSpeech(this.textToSpeechText, this.textToSpeechLocale,
+      voiceProfile.fullName, voiceProfile.gender)
+      .then(result => {
+        this.playFile(result);
+      })
+      .catch(() => {
+        console.log('voice failed');
+      });
   }
 
   // playSample() {
@@ -75,12 +75,14 @@ export class TextToSpeechComponent extends CognitiveServicesComponent implements
   }
 
   private playFile(data: ArrayBuffer) {
-    this.audioContext.decodeAudioData(data)
-      .then(decodedData => {
-        this.audioSource = this.audioContext.createBufferSource();
-        this.audioSource.buffer = decodedData;
-        this.audioSource.connect(this.audioContext.destination);
-        this.audioSource.start(0);
-     });
+    this.audioContext.resume().then(() => {
+      this.audioContext.decodeAudioData(data)
+        .then(decodedData => {
+          this.audioSource = this.audioContext.createBufferSource();
+          this.audioSource.buffer = decodedData;
+          this.audioSource.connect(this.audioContext.destination);
+          this.audioSource.start(0);
+        });
+    });
   }
 }
