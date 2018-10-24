@@ -21,8 +21,11 @@ li button {
 }
 .nav > li > a {
     padding: 25px 25px 20px 25px;
+  border-bottom: 5px solid transparent;
 }
-.nav > li > a:hover, .nav > li > a:active {
+.nav > li > a:hover,
+.nav > li > a:active,
+.nav > li > a.active {
     color: #fff;
     border-bottom: 5px solid #46850f;
 }
